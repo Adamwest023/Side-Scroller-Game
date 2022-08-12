@@ -5,6 +5,7 @@ window.addEventListener('load', function () {
     canvas.width = 800;
     canvas.height = 720;
     let enemies = [];
+    let score = 0;
 
 
     //keeps track of all keys currently pressed and status of game
@@ -56,18 +57,20 @@ window.addEventListener('load', function () {
             this.frameTimer = 0;
             this.frameInterval = 1000 / this.fps;
         }
-        draw(ctx) {
-            ctx.drawImage(this.image, this.frameX * this.width, this.frameY * this.height, this.width, this.height, this.x, this.y, this.width, this.height);
+        draw(context) {
+            context.strokeStyle = 'white';
+            context.strokeRect(this.x,this.y,this.width,this.height);
+            context.drawImage(this.image, this.frameX * this.width, this.frameY * this.height, this.width, this.height, this.x, this.y, this.width, this.height);
         }
-        update(input,deltaTime) {
+        update(input, deltaTime) {
             //loops through frames for animation
-            if(this.frameTimer > this.frameInterval) {
-                if(this.frameX >= this.maxFrame) this.frameX = 0;
+            if (this.frameTimer > this.frameInterval) {
+                if (this.frameX >= this.maxFrame) this.frameX = 0;
                 else this.frameX++;
-            }else {
+            } else {
                 this.frameTimer += deltaTime;
             }
-           //controls
+            //controls
             if (input.keys.indexOf('ArrowRight') > -1) {
                 this.speed = 5;
             } else if (input.keys.indexOf('ArrowLeft') > -1) {
@@ -143,6 +146,8 @@ window.addEventListener('load', function () {
             this.markedForDeletion = false;
         }
         draw(context) {
+            context.strokeStyle = 'white';
+            context.strokeRect(this.x,this.y,this.width,this.height);
             context.drawImage(this.image, this.frameX * this.width, 0, this.width, this.height, this.x, this.y, this.width, this.height);
         }
         update(deltaTime) {
@@ -154,7 +159,10 @@ window.addEventListener('load', function () {
                 this.frameTimer += deltaTime;
             }
             this.x -= this.speed;
-            if(this.x < 0 - this.width) this.markedForDeletion = true;
+            if (this.x < 0 - this.width) {
+                this.markedForDeletion = true;
+                score++;
+            }
         }
     }
 
@@ -175,7 +183,15 @@ window.addEventListener('load', function () {
         enemies = enemies.filter(enemy => !enemy.markedForDeletion);
     }
 
-    function displayStatueText() { }
+    function displayStatueText(context) {
+        context.fillStyle = 'black';
+        context.font = '40px Helvetica';
+        context.fillText('Score: ' + score, 20, 50);
+        context.fillStyle = 'white';
+        context.font = '40px Helvetica';
+        context.fillText('Score: ' + score, 22, 52);
+
+    }
 
     //calling each class
     const input = new InputHandler();
@@ -196,8 +212,9 @@ window.addEventListener('load', function () {
         background.draw(ctx);
         // background.update();
         player.draw(ctx);
-        player.update(input,deltaTime);
+        player.update(input, deltaTime);
         handleEnemies(deltaTime);
+        displayStatueText(ctx);
         //call to request build in animation loop
         requestAnimationFrame(animate);
     }
