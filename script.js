@@ -55,7 +55,7 @@ window.addEventListener('load', function () {
             ctx.fillRect(this.x, this.y, this.width, this.height);
             ctx.drawImage(this.image, this.frameX * this.width, this.frameY * this.height, this.width, this.height, this.x, this.y, this.width, this.height);
         }
-        update() {
+        update(input) {
 
             if (input.keys.indexOf('ArrowRight') > -1) {
                 this.speed = 5;
@@ -113,6 +113,24 @@ window.addEventListener('load', function () {
     }
 
     class Enemy {
+        constructor(gameWidth, gameHeight) {
+            this.gameHeight = gameHeight;
+            this.gameWidth = gameWidth;
+            this.image = enemy1;
+            this.width = 160;
+            this.height = 119;
+            this.x = this.gameWidth;
+            this.y = this.gameHeight - this.height;
+            this.frameX = 0;
+        }
+        draw(context) {
+            context.fillStyle = 'white';
+            context.fillRect(this.x, this.y, this.width, this.height);
+            context.drawImage(this.image, this.frameX * this.width, 0, this.width, this.height,this.x, this.y, this.width, this.height);
+        }
+        update(){
+            this.x--;
+        }
     }
 
     function handleEnemies() { }
@@ -123,6 +141,7 @@ window.addEventListener('load', function () {
     const input = new InputHandler();
     const player = new Player(canvas.width, canvas.height);
     const background = new Background(canvas.width, canvas.height);
+    const enemy = new Enemy(canvas.width, canvas.height);
 
     function animate() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -130,7 +149,9 @@ window.addEventListener('load', function () {
         background.draw(ctx);
         // background.update();
         player.draw(ctx);
-        player.update();
+        enemy.draw(ctx);
+        player.update(input);
+        enemy.update();
         //call to request build in animation loop
         requestAnimationFrame(animate);
     }
