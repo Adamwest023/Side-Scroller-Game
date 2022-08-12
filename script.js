@@ -60,6 +60,7 @@ window.addEventListener('load', function () {
             ctx.drawImage(this.image, this.frameX * this.width, this.frameY * this.height, this.width, this.height, this.x, this.y, this.width, this.height);
         }
         update(input,deltaTime) {
+            //loops through frames for animation
             if(this.frameTimer > this.frameInterval) {
                 if(this.frameX >= this.maxFrame) this.frameX = 0;
                 else this.frameX++;
