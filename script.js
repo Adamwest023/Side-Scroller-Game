@@ -48,7 +48,7 @@ window.addEventListener('load', function () {
             this.frameY = 0;
             this.speed = 0;
             this.vy = 0;
-            this.weight = 0
+            this.weight = 1;
         }
         draw(ctx) {
             ctx.fillStyle = 'white';
@@ -56,13 +56,13 @@ window.addEventListener('load', function () {
             ctx.drawImage(this.image, this.frameX * this.width, this.frameY * this.height, this.width, this.height, this.x, this.y, this.width, this.height);
         }
         update() {
-           
+
             if (input.keys.indexOf('ArrowRight') > -1) {
                 this.speed = 5;
             } else if (input.keys.indexOf('ArrowLeft') > -1) {
                 this.speed = -5;
-            }else if (input.keys.indexOf('ArrowUp') > -1) {
-                this.vy -=30;
+            } else if (input.keys.indexOf('ArrowUp') > -1 && this.onGround()) {
+                this.vy -= 32;
             }
             else {
                 this.speed = 0
@@ -70,13 +70,21 @@ window.addEventListener('load', function () {
             //horizontal movement
             this.x += this.speed;
             //creates left and right boundaries 
-            if (this.x < 0 )this.x = 0;
+            if (this.x < 0) this.x = 0;
             else if (this.x > this.gameWidth - this.width) this.x = this.gameWidth - this.width;
             // vertical movement
             this.y += this.vy;
+            if (!this.onGround()) {
+                this.vy += this.weight;
+            } else {
+                this.vy = 0;
+            }
+            if (this.y  > this.gameHeight - this.height) this.y = this.gameHeight - this.height;
         }
         //gravity check
-        
+        onGround() {
+            return this.y >= this.gameHeight - this.height;
+        }
     }
 
     class Background { }
