@@ -239,11 +239,12 @@ window.addEventListener('load', function () {
 
     function displayStatueText(context) {
         if (!gameOver) {
+
             context.font = '40px Helvetica';
             context.fillStyle = 'black';
-            context.fillText('Score: ' + score, 30, 50);
+            context.fillText('Score: ' + score, canvas.width / 15, 80);
             context.fillStyle = 'white';
-            context.fillText('Score: ' + score, 32, 52);
+            context.fillText('Score: ' + score, canvas.width / 15, 82);
         } else {
             context.textAlign = 'center';
             context.fillStyle = 'black';
