@@ -118,9 +118,9 @@ window.addEventListener('load', function () {
                 this.frameTimer += deltaTime;
             }
             //controls
-            if (input.keys.indexOf('ArrowRight') > -1) {
+            if (input.keys.indexOf('ArrowRight'|| 'ArrowRight' && "ArrowUp") > -1) {
                 this.speed = 5;
-            } else if (input.keys.indexOf('ArrowLeft') > -1) {
+            } else if (input.keys.indexOf('ArrowLeft'|| 'ArrowLeft' && "ArrowUp") > -1) {
                 this.speed = -5;
             } else if ((input.keys.indexOf('ArrowUp') > -1 || input.keys.indexOf('swipe up') > -1) &&
                 this.onGround()) {
@@ -298,7 +298,7 @@ window.addEventListener('load', function () {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         //draws our elements and class
         background.draw(ctx);
-        // background.update();
+        background.update();
         player.draw(ctx);
         player.update(input, deltaTime, enemies);
         handleEnemies(deltaTime);
