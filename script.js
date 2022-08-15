@@ -13,6 +13,8 @@ window.addEventListener('load', function () {
     class InputHandler {
         constructor() {
             this.keys = [];
+            this.touchY = '';
+            this.touchThreshold = 30;
             //creates an instance when a key is pressed with built in method 
             window.addEventListener('keydown', e => {
                 //adding only certain keys into array if it is not already present
@@ -23,7 +25,8 @@ window.addEventListener('load', function () {
                     && this.keys.indexOf(e.key) === -1) {
                     this.keys.push(e.key);
                 }
-                console.log(e.key, this.keys);
+                //calling game restart
+                else if (e.key === "Enter" && gameOver) restartGame();
             });
             //creates an instance where when a key is released that key is removed from the array
             window.addEventListener('keyup', e => {
@@ -36,6 +39,20 @@ window.addEventListener('load', function () {
                 }
                 console.log(e.key, this.keys);
             });
+            //touch functions
+            window.addEventListener('touchstart', e => {
+                this.touchY = e.changedTouches[0].pageY
+            });
+            window.addEventListener('touchmove', e => {
+                const swipeDistance = e.changedTouches[0].pageY - this.touchY;
+                if (swipeDistance < - this.touchThreshold && this.keys.indexOf('swipe up') === -1)
+                    this.keys.push('swipe up');
+                else if (swipeDistance > this.touchThreshold && this.keys.indexOf('swipe down') === -1)
+                    this.keys.push('swipe down');
+            });
+            window.addEventListener('touchend', e => {
+                console.log(this.keys);
+            });
         }
     }
 
@@ -45,7 +62,7 @@ window.addEventListener('load', function () {
             this.gameHeight = gameHeight;
             this.width = 200;
             this.height = 200;
-            this.x = 10;
+            this.x = 100;
             this.y = this.gameHeight - this.height;
             this.image = playerImage;
             this.frameX = 0;
@@ -57,6 +74,12 @@ window.addEventListener('load', function () {
             this.speed = 0;
             this.vy = 0;
             this.weight = 1;
+        }
+        restart() {
+            this.x = 100;
+            this.y = this.gameHeight - this.height;
+            this.maxFrame = 8;
+            this.frameY = 0;
         }
         draw(context) {
             // context.strokeStyle = 'white';
@@ -143,6 +166,9 @@ window.addEventListener('load', function () {
             this.x -= this.speed;
             if (this.x < 0 - this.width) this.x = 0;
         }
+        restart() {
+            this.x = 0;
+        }
     }
 
     class Enemy {
@@ -214,17 +240,27 @@ window.addEventListener('load', function () {
         } else {
             context.textAlign = 'center';
             context.fillStyle = 'black';
-            context.fillText('Game Over, try again!', canvas.width / 2, 200);
+            context.fillText('Game Over, press Enter to try again!', canvas.width / 2, 200);
+            context.fillStyle = 'white';
+            context.fillText('Game Over, press Enter to try again!', canvas.width / 2, 202);
             context.fillStyle = 'black';
             context.fillText('Score: ' + score, canvas.width / 2, 255);
             context.fillStyle = 'white';
             context.fillText('Score: ' + score, canvas.width / 2, 253);
-            context.fillStyle = 'white';
-            context.fillText('Game Over, try again!', canvas.width / 2, 202);
         }
 
     }
 
+    //game restart
+
+    function restartGame() {
+        player.restart();
+        background.restart();
+        enemies = [];
+        score = 0;
+        gameOver = false;
+        animate(0);
+    }
     //calling each class
     const input = new InputHandler();
     const player = new Player(canvas.width, canvas.height);
