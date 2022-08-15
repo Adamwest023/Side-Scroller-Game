@@ -49,9 +49,13 @@ window.addEventListener('load', function () {
                     this.keys.push('swipe up');
                 else if (swipeDistance > this.touchThreshold && this.keys.indexOf('swipe down') === -1)
                     this.keys.push('swipe down');
+                if (gameOver) restartGame();
             });
             window.addEventListener('touchend', e => {
-                console.log(this.keys);
+                //pull keys from array after they have been let go 
+                this.keys.splice(this.keys.indexOf('swipe up'), 1);
+                this.keys.splice(this.keys.indexOf('swipe down'), 1);
+
             });
         }
     }
@@ -115,7 +119,8 @@ window.addEventListener('load', function () {
                 this.speed = 5;
             } else if (input.keys.indexOf('ArrowLeft') > -1) {
                 this.speed = -5;
-            } else if (input.keys.indexOf('ArrowUp') > -1 && this.onGround()) {
+            } else if ((input.keys.indexOf('ArrowUp') > -1 || input.keys.indexOf('swipe up') > -1) &&
+                this.onGround()) {
                 this.vy -= 32;
             }
             else {
@@ -234,15 +239,15 @@ window.addEventListener('load', function () {
         if (!gameOver) {
             context.font = '40px Helvetica';
             context.fillStyle = 'black';
-            context.fillText('Score: ' + score, 20, 50);
+            context.fillText('Score: ' + score, 30, 50);
             context.fillStyle = 'white';
-            context.fillText('Score: ' + score, 22, 52);
+            context.fillText('Score: ' + score, 32, 52);
         } else {
             context.textAlign = 'center';
             context.fillStyle = 'black';
-            context.fillText('Game Over, press Enter to try again!', canvas.width / 2, 200);
+            context.fillText('Game Over, press Enter or swipe down to try again!', canvas.width / 2, 200);
             context.fillStyle = 'white';
-            context.fillText('Game Over, press Enter to try again!', canvas.width / 2, 202);
+            context.fillText('Game Over, press Enter or swipe down to try again!', canvas.width / 2, 202);
             context.fillStyle = 'black';
             context.fillText('Score: ' + score, canvas.width / 2, 255);
             context.fillStyle = 'white';
