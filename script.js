@@ -6,6 +6,7 @@ window.addEventListener('load', function () {
     canvas.height = 720;
     let enemies = [];
     let score = 0;
+    let gameOver = false;
 
 
     //keeps track of all keys currently pressed and status of game
@@ -50,19 +51,34 @@ window.addEventListener('load', function () {
             this.frameX = 0;
             this.maxFrame = 8;
             this.frameY = 0;
-            this.speed = 0;
-            this.vy = 0;
-            this.weight = 1;
             this.fps = 20;
             this.frameTimer = 0;
             this.frameInterval = 1000 / this.fps;
+            this.speed = 0;
+            this.vy = 0;
+            this.weight = 1;
         }
         draw(context) {
             context.strokeStyle = 'white';
-            context.strokeRect(this.x,this.y,this.width,this.height);
-            context.drawImage(this.image, this.frameX * this.width, this.frameY * this.height, this.width, this.height, this.x, this.y, this.width, this.height);
+            context.strokeRect(this.x, this.y, this.width, this.height);
+            context.beginPath();
+            context.arc(this.x + this.width / 2, this.y + this.height / 2, this.width / 2, 0, Math.PI * 2);
+            context.stroke();
+            context.strokeRect(this.x, this.y, this.width, this.height);
+            context.drawImage(this.image, this.frameX * this.width, this.frameY * this.height,
+                this.width, this.height, this.x, this.y, this.width, this.height);
         }
-        update(input, deltaTime) {
+        update(input, deltaTime, enemies) {
+
+            //collision detection
+            enemies.forEach(enemy => {
+                const dx = enemy.x - this.x;
+                const dy = enemy.y - this.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                if (distance < enemy.width / 2 + this.width / 2) {
+                    gameOver = true
+                }
+            })
             //loops through frames for animation
             if (this.frameTimer > this.frameInterval) {
                 if (this.frameX >= this.maxFrame) this.frameX = 0;
@@ -147,7 +163,11 @@ window.addEventListener('load', function () {
         }
         draw(context) {
             context.strokeStyle = 'white';
-            context.strokeRect(this.x,this.y,this.width,this.height);
+            context.strokeRect(this.x, this.y, this.width, this.height);
+            context.beginPath();
+            context.arc(this.x + this.width / 2, this.y + this.height / 2, this.width / 2, 0, Math.PI * 2);
+            context.stroke();
+            context.strokeRect(this.x, this.y, this.width, this.height);
             context.drawImage(this.image, this.frameX * this.width, 0, this.width, this.height, this.x, this.y, this.width, this.height);
         }
         update(deltaTime) {
@@ -212,11 +232,11 @@ window.addEventListener('load', function () {
         background.draw(ctx);
         // background.update();
         player.draw(ctx);
-        player.update(input, deltaTime);
+        player.update(input, deltaTime, enemies);
         handleEnemies(deltaTime);
         displayStatueText(ctx);
         //call to request build in animation loop
-        requestAnimationFrame(animate);
+        if (!gameOver) requestAnimationFrame(animate);
     }
 
     animate(0);
