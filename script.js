@@ -8,6 +8,8 @@ window.addEventListener('load', function () {
     let score = 0;
     let gameOver = false;
 
+    //Creating fullscreen element for API 
+    const fullScreenButton = document.getElementById('fullScreenButton');
 
     //keeps track of all keys currently pressed and status of game
     class InputHandler {
@@ -86,12 +88,12 @@ window.addEventListener('load', function () {
             this.frameY = 0;
         }
         draw(context) {
+            // context.lineWidth = 5;
             // context.strokeStyle = 'white';
-            // context.strokeRect(this.x, this.y, this.width, this.height);
             // context.beginPath();
-            // context.arc(this.x + this.width / 2, this.y + this.height / 2, this.width / 2, 0, Math.PI * 2);
+            // context.arc(this.x + this.width / 2, this.y + this.height / 2 +20, this.width / 3, 0, Math.PI * 2);
             // context.stroke();
-            // context.strokeRect(this.x, this.y, this.width, this.height);
+
             context.drawImage(this.image, this.frameX * this.width, this.frameY * this.height,
                 this.width, this.height, this.x, this.y, this.width, this.height);
         }
@@ -100,10 +102,11 @@ window.addEventListener('load', function () {
             //collision detection
             enemies.forEach(enemy => {
                 //set to offset corners to make the circles centered around the player/enemy
-                const dx = (enemy.x + enemy.width / 2) - (this.x + this.width / 2);
-                const dy = (enemy.y + enemy.height / 2) - (this.y + this.height / 2);
+                const dx = (enemy.x + enemy.width / 2- 20) - (this.x + this.width / 2);
+                const dy = (enemy.y + enemy.height / 2) - (this.y + this.height / 2 +20);
+                //using pythagorean theory to detect collision 
                 const distance = Math.sqrt(dx * dx + dy * dy);
-                if (distance < enemy.width / 2 + this.width / 2) {
+                if (distance < enemy.width / 3 + this.width / 3) {
                     gameOver = true
                 }
             })
@@ -194,12 +197,11 @@ window.addEventListener('load', function () {
             this.markedForDeletion = false;
         }
         draw(context) {
+            // context.lineWidth = 5;
             // context.strokeStyle = 'white';
-            // context.strokeRect(this.x, this.y, this.width, this.height);
             // context.beginPath();
-            // context.arc(this.x + this.width / 2, this.y + this.height / 2, this.width / 2, 0, Math.PI * 2);
+            // context.arc(this.x + this.width / 2 -20, this.y + this.height / 2, this.width / 3, 0, Math.PI * 2);
             // context.stroke();
-            // context.strokeRect(this.x, this.y, this.width, this.height);
             context.drawImage(this.image, this.frameX * this.width, 0, this.width, this.height, this.x, this.y, this.width, this.height);
         }
         update(deltaTime) {
@@ -257,7 +259,6 @@ window.addEventListener('load', function () {
     }
 
     //game restart
-
     function restartGame() {
         player.restart();
         background.restart();
@@ -266,6 +267,20 @@ window.addEventListener('load', function () {
         gameOver = false;
         animate(0);
     }
+    //toggle fullscreen
+    function toggleFullscreen() {
+        console.log(document.fullscreenElement);
+        //asynchronous, returns a promise 
+        if (!document.fullscreenElement) {
+            canvas.requestFullscreen().catch(err => {
+                alert(`Error, can't enable full-screen mode: ${err.message}`);
+            });
+        } else {
+            document.exitFullscreen();
+        }
+    }
+    fullScreenButton.addEventListener('click',toggleFullscreen);
+
     //calling each class
     const input = new InputHandler();
     const player = new Player(canvas.width, canvas.height);
